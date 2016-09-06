@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import OHLC from './USDJPY'
-import { CandleStickChart } from '../src/CandleStickChart'
+import { CandleStickChart } from '../src'
 
 console.log(OHLC);
 
@@ -32,9 +32,9 @@ export default class App extends Component {
     const width = this.state.width;
     const barWidth = 8;
     const colorScheme = {
-      'up': '#1ABC9C',
-      'down': '#EC737D',
-      'wick': '#898989'
+      fillUp: '#1ABC9C',
+      fillDown: '#EC737D',
+      wick: '#898989'
     };
 
     return (
@@ -45,7 +45,7 @@ export default class App extends Component {
             width={width}
             barWidth={barWidth}
             colorScheme={colorScheme}
-            OHLC={OHLC}
+            data={OHLC}
           />
         </svg>
       </div>

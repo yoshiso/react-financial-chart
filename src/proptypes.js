@@ -2,8 +2,8 @@ import { PropTypes } from 'react';
 
 
 export const ColorSchemePropType = PropTypes.shape({
-  up: PropTypes.string.isRequired,
-  down: PropTypes.string.isRequired,
+  fillUp: PropTypes.string.isRequired,
+  fillDown: PropTypes.string.isRequired,
   wick: PropTypes.string.isRequired
 })
 
