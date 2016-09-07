@@ -6,6 +6,27 @@ import { CandleStick } from '../shapes/CandleStick';
 
 export class CandleStickChart extends Component {
 
+  static propTypes = {
+    height: React.PropTypes.number.isRequired,
+    width: React.PropTypes.number.isRequired,
+    barWidth: React.PropTypes.number.isRequired,
+    keyO: React.PropTypes.string,
+    keyH: React.PropTypes.string,
+    keyL: React.PropTypes.string,
+    keyC: React.PropTypes.string,
+    keyDate: React.PropTypes.string,
+    colorScheme: ColorSchemePropType.isRequired,
+    data: OHLCPropType.isRequired
+  }
+
+  static defaultProps = {
+    keyO: 'open',
+    keyH: 'high',
+    keyL: 'low',
+    keyC: 'close',
+    keyDate: 'date',
+  }
+
   scales() {
     const { width, height, data, keyH, keyL, keyDate } = this.props;
     const xScale = scalePoint()
@@ -25,7 +46,7 @@ export class CandleStickChart extends Component {
     const { height, width, barWidth, colorScheme } = this.props;
     const { data, keyO, keyH, keyC, keyL, keyDate } = this.props;
     const { xScale, yScale } = this.scales()
-
+    const { children } = this.props;
     return (
       <g>
         {
@@ -46,25 +67,4 @@ export class CandleStickChart extends Component {
       </g>
     );
   }
-}
-
-CandleStickChart.propTypes = {
-  height: React.PropTypes.number.isRequired,
-  width: React.PropTypes.number.isRequired,
-  barWidth: React.PropTypes.number.isRequired,
-  keyO: React.PropTypes.string,
-  keyH: React.PropTypes.string,
-  keyL: React.PropTypes.string,
-  keyC: React.PropTypes.string,
-  keyDate: React.PropTypes.string,
-  colorScheme: ColorSchemePropType.isRequired,
-  data: OHLCPropType.isRequired
-}
-
-CandleStickChart.defaultProps = {
-  keyO: 'open',
-  keyH: 'high',
-  keyL: 'low',
-  keyC: 'close',
-  keyDate: 'date',
 }

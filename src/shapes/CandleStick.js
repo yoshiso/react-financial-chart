@@ -1,7 +1,18 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { ColorSchemePropType } from '../proptypes';
 
 export class CandleStick extends Component {
+
+    static propTypes = {
+        barWidth: React.PropTypes.number.isRequired,
+        yO: React.PropTypes.number.isRequired,
+        yH: React.PropTypes.number.isRequired,
+        yL: React.PropTypes.number.isRequired,
+        yC: React.PropTypes.number.isRequired,
+        x: React.PropTypes.number.isRequired,
+        colorScheme: ColorSchemePropType.isRequired
+    };
+
     render() {
         const { barWidth, date, yO, yH, yL, yC, x, colorScheme } = this.props;
 
@@ -18,14 +29,4 @@ export class CandleStick extends Component {
                 fill={fillColor}></path>
         );
     }
-}
-
-CandleStick.propTypes = {
-    barWidth: React.PropTypes.number.isRequired,
-    yO: React.PropTypes.number.isRequired,
-    yH: React.PropTypes.number.isRequired,
-    yL: React.PropTypes.number.isRequired,
-    yC: React.PropTypes.number.isRequired,
-    x: React.PropTypes.number.isRequired,
-    colorScheme: ColorSchemePropType.isRequired
 }
