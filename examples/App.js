@@ -23,26 +23,28 @@ export default class App extends Component {
   componentDidMount() {
     const self = this
     window.addEventListener('resize', function() {
-      self.setState({width: window.innerWidth})
+      self.setState({width: window.innerWidth - 20})
     })
   }
 
   render() {
-    const height = this.state.height;
-    const width = this.state.width;
+    const layout = this.state;
     const barWidth = 8;
     const colorScheme = {
       fillUp: '#1ABC9C',
       fillDown: '#EC737D',
-      wick: '#898989'
+      wick: '#898989',
+      chartBg: '#F5F5F6',
+      bg: '#fff'
     };
 
     return (
       <div>
-        <svg width={`${width}px`} height={`${height}px`}>
+        <svg width={`${layout.width}px`}
+             height={`${layout.height}px`}>
+          <rect width={layout.width} height={layout.height} fill={colorScheme.bg}></rect>
           <CandleStickChart
-            height={height}
-            width={width}
+            layout={layout}
             barWidth={barWidth}
             colorScheme={colorScheme}
             data={OHLC}

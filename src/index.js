@@ -1,1 +1,1 @@
-export const CandleStickChart = require('./charts/CandleStickChart').CandleStickChart;
+export CandleStickChart from './charts/CandleStickChart';

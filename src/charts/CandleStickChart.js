@@ -3,12 +3,17 @@ import { min, max, scaleLinear, scalePoint } from 'd3';
 
 import { ColorSchemePropType, OHLCPropType } from '../proptypes';
 import { CandleStick } from '../shapes/CandleStick';
+import wrapChart from './wrapChart';
 
-export class CandleStickChart extends Component {
+class CandleStickChart extends Component {
+
+  static displayName = 'CandleStickChart';
 
   static propTypes = {
-    height: React.PropTypes.number.isRequired,
-    width: React.PropTypes.number.isRequired,
+    layout: React.PropTypes.shape({
+      width: React.PropTypes.number,
+      height: React.PropTypes.number
+    }),
     barWidth: React.PropTypes.number.isRequired,
     keyO: React.PropTypes.string,
     keyH: React.PropTypes.string,
@@ -28,36 +33,37 @@ export class CandleStickChart extends Component {
   }
 
   scales() {
-    const { width, height, data, keyH, keyL, keyDate } = this.props;
-    const xScale = scalePoint()
-                     .domain(data[keyDate])
-                     .range([0, width])
-                     .padding(0.5)
-    const yScale = scaleLinear()
-                      .range([height, 0])
-                      .domain([
-                          min(data[keyL]),
-                          max(data[keyH])
-                      ])
-    return { xScale, yScale }
+    const { layout: { width, height }, data, keyH, keyL, keyDate } = this.props;
+    const x = scalePoint()
+                .domain(data[keyDate])
+                .range([0, width])
+                .padding(0.5)
+    const y = scaleLinear()
+                .range([height, 0])
+                .domain([
+                    min(data[keyL]),
+                    max(data[keyH])
+                ])
+    return { x, y }
   }
 
   render() {
-    const { height, width, barWidth, colorScheme } = this.props;
+    const { layout: { height, width }, barWidth, colorScheme } = this.props;
     const { data, keyO, keyH, keyC, keyL, keyDate } = this.props;
-    const { xScale, yScale } = this.scales()
+    const { x, y } = this.scales()
     const { children } = this.props;
     return (
       <g>
+        <rect width={width} height={height} fill={colorScheme.chartBg}></rect>
         {
           data[keyDate].map(function(date, i) {
             return (
               <CandleStick
-                yO={yScale(data[keyO][i])}
-                yH={yScale(data[keyH][i])}
-                yL={yScale(data[keyL][i])}
-                yC={yScale(data[keyC][i])}
-                x={xScale(date)}
+                yO={y(data[keyO][i])}
+                yH={y(data[keyH][i])}
+                yL={y(data[keyL][i])}
+                yC={y(data[keyC][i])}
+                x={x(date)}
                 barWidth={8}
                 key={date}
                 colorScheme={colorScheme} />
@@ -68,3 +74,5 @@ export class CandleStickChart extends Component {
     );
   }
 }
+
+export default wrapChart(CandleStickChart);
