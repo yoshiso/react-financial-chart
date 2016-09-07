@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { min, max, scaleLinear, scalePoint } from "d3";
+import { min, max, scaleLinear, scalePoint } from 'd3';
 
 import { ColorSchemePropType, OHLCPropType } from '../proptypes';
 import { CandleStick } from '../shapes/CandleStick';
