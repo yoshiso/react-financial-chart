@@ -9,24 +9,26 @@ export class XAxis extends Component {
     data: PropTypes.object,
     dataKey: PropTypes.string,
     width: PropTypes.number,
-    height: PropTypes.number
+    height: PropTypes.number,
+    formatter: PropTypes.func
   };
 
   static defaultProps = {
-    axisHeight: 20,
     tickCount: 8,
     formatter: timeFormat('%m/%d %H:%M')
   }
 
   render() {
-    const { width, height, data, dataKey, tickCount, axisHeight } = this.props;
+    const { width, height, data, dataKey, tickCount, axisHeight, axisWidth } = this.props;
+
     const { formatter } = this.props;
+    const chartWidth = width - axisWidth;
     // tickValues generator should be fixed.
     // - other points should has equal pads
     // - needs prefix/suffix pad
     const scale = scalePoint()
                     .domain(data[dataKey])
-                    .range([0, width])
+                    .range([0, chartWidth])
                     .padding(0.5);
     const tickValues = ticks(0, data[dataKey].length-1, tickCount)
                           .map((i) => data[dataKey][i])

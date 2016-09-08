@@ -34,7 +34,7 @@ export class CandleStickChart extends Component {
   }
 
   scales() {
-    const { layout: { width, height }, data, keyH, keyL, keyDate } = this.props;
+    const { rect: { width, height }, data, keyH, keyL, keyDate } = this.props;
     const x = scalePoint()
                 .domain(data[keyDate])
                 .range([0, width])
@@ -49,7 +49,7 @@ export class CandleStickChart extends Component {
   }
 
   render() {
-    const { layout: { height, width }, barWidth, colorScheme } = this.props;
+    const { rect: { height, width }, barWidth, colorScheme } = this.props;
     const { data, keyO, keyH, keyC, keyL, keyDate } = this.props;
     const { x, y } = this.scales()
     const { children } = this.props;

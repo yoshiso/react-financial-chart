@@ -7,6 +7,12 @@ const findAndProvisionXAxis = (children, props) => {
   return React.cloneElement(xAxis, { ...props })
 }
 
+const findAndProvisionYAxis = (children, props) => {
+  const yAxis = findByComponent(children, 'YAxis');
+  if (!yAxis) { return null };
+  return React.cloneElement(yAxis, { ...props })
+}
+
 
 
 export default (ChartComponent) => {
@@ -18,6 +24,8 @@ export default (ChartComponent) => {
         width: React.PropTypes.number,
         height: React.PropTypes.number
       }),
+      axisHeight: React.PropTypes.number,
+      axisWidth: React.PropTypes.number,
       data: PropTypes.object,
       margin: PropTypes.shape({
         top: PropTypes.integer,
@@ -28,7 +36,9 @@ export default (ChartComponent) => {
     }
 
     static defaultProps = {
-      margin: { top: 10, left: 10, right: 10, bottom: 10 }
+      margin: { top: 10, left: 10, right: 10, bottom: 10 },
+      axisHeight: 20,
+      axisWidth: 60
     }
 
     chartRect() {
@@ -40,17 +50,21 @@ export default (ChartComponent) => {
     }
 
     render() {
-        const { layout, margin, children, ...others } = this.props;
+        const { layout, margin, children, axisHeight, axisWidth, ...others } = this.props;
         const { colorScheme } = others;
         const containerRect = this.chartRect()
 
         const xAxis = findAndProvisionXAxis(children, {
-          ...containerRect, data: others.data,
+          ...containerRect, data: others.data, axisWidth, axisHeight
         });
 
+        const yAxis = findAndProvisionYAxis(children, {
+          ...containerRect, data: others.data, axisWidth, axisHeight
+        })
+
         const chartRect = {
-          width: containerRect.width,
-          height: containerRect.height - xAxis.props.axisHeight
+          width: xAxis ? containerRect.width - yAxis.props.axisWidth :  containerRect.width,
+          height: yAxis ? containerRect.height - xAxis.props.axisHeight :  containerRect.height
         }
 
         console.debug('chartRect', chartRect)
@@ -61,10 +75,12 @@ export default (ChartComponent) => {
              transform={ `translate(${margin.left},${margin.top})` }>
             <rect width={chartRect.width}
                   height={chartRect.height}
-                  fill={colorScheme.chartBg}></rect>
+                  fill={colorScheme.chartBg}
+                  stroke={colorScheme.chartFrame}></rect>
             { xAxis }
+            { yAxis }
             <ChartComponent
-              layout={ chartRect }
+              rect={ chartRect }
               { ...others }
               ></ChartComponent>
           </g>

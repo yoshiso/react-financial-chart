@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import OHLC from './USDJPY'
-import { CandleStickChart, XAxis } from '../src'
+import { CandleStickChart, XAxis, YAxis } from '../src'
 
 ['open', 'high', 'low', 'close', 'date'].forEach(function(n) {
   OHLC[n] = OHLC[n].slice(0, 60)
@@ -21,7 +21,10 @@ export default class App extends Component {
   componentDidMount() {
     const self = this
     window.addEventListener('resize', function() {
-      self.setState({width: window.innerWidth - 20})
+      self.setState({
+        width: window.innerWidth - 20,
+        height: window.innerHeight - 20
+      })
     })
   }
 
@@ -33,20 +36,24 @@ export default class App extends Component {
       fillDown: '#EC737D',
       wick: '#898989',
       chartBg: '#F5F5F6',
-      bg: '#fff'
+      chartFrame: '#898989',
+      bg: '#fff',
     };
 
     return (
       <div>
         <svg width={`${layout.width}px`}
              height={`${layout.height}px`}>
-          <rect width={layout.width} height={layout.height} fill={colorScheme.bg}></rect>
+          <rect width={layout.width}
+                height={layout.height}
+                fill={colorScheme.bg}></rect>
           <CandleStickChart
             layout={layout}
             barWidth={barWidth}
             colorScheme={colorScheme}
             data={OHLC}>
             <XAxis dataKey='date' />
+            <YAxis dataKey={['open', 'high', 'low', 'close']} />
           </CandleStickChart>
         </svg>
       </div>
