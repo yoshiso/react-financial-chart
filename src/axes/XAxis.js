@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { scalePoint, ticks, timeFormat } from 'd3';
+import { scaleBand, ticks, timeFormat } from 'd3';
 
 export class XAxis extends Component {
 
@@ -26,10 +26,11 @@ export class XAxis extends Component {
     // tickValues generator should be fixed.
     // - other points should has equal pads
     // - needs prefix/suffix pad
-    const scale = scalePoint()
+    const scale = scaleBand()
                     .domain(data[dataKey])
                     .range([0, chartWidth])
-                    .padding(0.5);
+                    .paddingInner(0.2)
+                    .paddingOuter(0.5);
     const tickValues = ticks(0, data[dataKey].length-1, tickCount)
                           .map((i) => data[dataKey][i])
     const fontSize = 12;

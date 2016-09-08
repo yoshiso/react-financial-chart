@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { min, max, scaleLinear, scalePoint } from 'd3';
+import { min, max, scaleLinear, scaleBand } from 'd3';
 
 import { ColorSchemePropType, OHLCPropType } from '../proptypes';
 import { CandleStick } from '../shapes/CandleStick';
@@ -11,11 +11,10 @@ export class CandleStickChart extends Component {
   static displayName = 'CandleStickChart';
 
   static propTypes = {
-    layout: React.PropTypes.shape({
+    rect: React.PropTypes.shape({
       width: React.PropTypes.number,
       height: React.PropTypes.number
     }),
-    barWidth: React.PropTypes.number.isRequired,
     keyO: React.PropTypes.string,
     keyH: React.PropTypes.string,
     keyL: React.PropTypes.string,
@@ -30,15 +29,16 @@ export class CandleStickChart extends Component {
     keyH: 'high',
     keyL: 'low',
     keyC: 'close',
-    keyDate: 'date',
+    keyDate: 'date'
   }
 
   scales() {
     const { rect: { width, height }, data, keyH, keyL, keyDate } = this.props;
-    const x = scalePoint()
+    const x = scaleBand()
                 .domain(data[keyDate])
                 .range([0, width])
-                .padding(0.5)
+                .paddingInner(0.2)
+                .paddingOuter(0.5)
     const y = scaleLinear()
                 .range([height, 0])
                 .domain([
@@ -49,7 +49,7 @@ export class CandleStickChart extends Component {
   }
 
   render() {
-    const { rect: { height, width }, barWidth, colorScheme } = this.props;
+    const { rect: { height, width }, colorScheme } = this.props;
     const { data, keyO, keyH, keyC, keyL, keyDate } = this.props;
     const { x, y } = this.scales()
     const { children } = this.props;
@@ -64,7 +64,7 @@ export class CandleStickChart extends Component {
                 yL={y(data[keyL][i])}
                 yC={y(data[keyC][i])}
                 x={x(date)}
-                barWidth={8}
+                barWidth={x.bandwidth()}
                 key={date}
                 colorScheme={colorScheme} />
             )

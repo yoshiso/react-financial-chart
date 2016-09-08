@@ -5,6 +5,10 @@ export const getDisplayName = (Component) => {
     return Component.displayName || Component.name || 'Component';
 }
 
+export const getMouseOffset = (event, rect) => {
+  return { x: event.clientX - rect.left, y: event.clientY - rect.top}
+}
+
 export const findAllByComponent = (children, displayName) => {
   const found = [];
   Children.forEach(children, child => {
