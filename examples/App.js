@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 
 import OHLC from './USDJPY'
-import { CandleStickChart } from '../src'
-
-console.log(OHLC);
+import { CandleStickChart, XAxis } from '../src'
 
 ['open', 'high', 'low', 'close', 'date'].forEach(function(n) {
   OHLC[n] = OHLC[n].slice(0, 60)
@@ -47,8 +45,9 @@ export default class App extends Component {
             layout={layout}
             barWidth={barWidth}
             colorScheme={colorScheme}
-            data={OHLC}
-          />
+            data={OHLC}>
+            <XAxis dataKey='date' />
+          </CandleStickChart>
         </svg>
       </div>
     );

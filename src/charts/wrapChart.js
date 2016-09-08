@@ -1,5 +1,13 @@
 import React, { Component, PropTypes } from 'react';
-import { getDisplayName } from '../utils/react';
+import { getDisplayName, findByComponent } from '../utils/react';
+
+const findAndProvisionXAxis = (children, props) => {
+  const xAxis = findByComponent(children, 'XAxis');
+  if (!xAxis) { return null };
+  return React.cloneElement(xAxis, { ...props })
+}
+
+
 
 export default (ChartComponent) => {
   return class ChartWrapper extends Component {
@@ -20,10 +28,10 @@ export default (ChartComponent) => {
     }
 
     static defaultProps = {
-      margin: { top: 5, left: 5, right: 5, bottom: 5 }
+      margin: { top: 10, left: 10, right: 10, bottom: 10 }
     }
 
-    chartLayout() {
+    chartRect() {
       const { layout, margin } = this.props;
       return {
         width: layout.width - margin.left - margin.right,
@@ -32,15 +40,31 @@ export default (ChartComponent) => {
     }
 
     render() {
-        const { layout, margin, ...others } = this.props;
-        const chartLayout = this.chartLayout()
+        const { layout, margin, children, ...others } = this.props;
+        const { colorScheme } = others;
+        const containerRect = this.chartRect()
+
+        const xAxis = findAndProvisionXAxis(children, {
+          ...containerRect, data: others.data,
+        });
+
+        const chartRect = {
+          width: containerRect.width,
+          height: containerRect.height - xAxis.props.axisHeight
+        }
+
+        console.debug('chartRect', chartRect)
 
         return (
-          <g width={chartLayout.width}
-             height={chartLayout.height}
-             transform={ `translate(${margin.top},${margin.left})` }>
+          <g width={chartRect.width}
+             height={chartRect.height}
+             transform={ `translate(${margin.left},${margin.top})` }>
+            <rect width={chartRect.width}
+                  height={chartRect.height}
+                  fill={colorScheme.chartBg}></rect>
+            { xAxis }
             <ChartComponent
-              layout={ chartLayout }
+              layout={ chartRect }
               { ...others }
               ></ChartComponent>
           </g>

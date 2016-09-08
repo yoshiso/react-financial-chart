@@ -5,7 +5,8 @@ import { ColorSchemePropType, OHLCPropType } from '../proptypes';
 import { CandleStick } from '../shapes/CandleStick';
 import wrapChart from './wrapChart';
 
-class CandleStickChart extends Component {
+@wrapChart
+export class CandleStickChart extends Component {
 
   static displayName = 'CandleStickChart';
 
@@ -54,7 +55,6 @@ class CandleStickChart extends Component {
     const { children } = this.props;
     return (
       <g>
-        <rect width={width} height={height} fill={colorScheme.chartBg}></rect>
         {
           data[keyDate].map(function(date, i) {
             return (
@@ -74,5 +74,3 @@ class CandleStickChart extends Component {
     );
   }
 }
-
-export default wrapChart(CandleStickChart);
