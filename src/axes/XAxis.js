@@ -10,7 +10,9 @@ export class XAxis extends Component {
     dataKey: PropTypes.string,
     width: PropTypes.number,
     height: PropTypes.number,
-    formatter: PropTypes.func
+    formatter: PropTypes.func,
+    xAxisHeight: PropTypes.number,
+    scale: PropTypes.func
   };
 
   static defaultProps = {
@@ -19,23 +21,20 @@ export class XAxis extends Component {
   }
 
   render() {
-    const { width, height, data, dataKey, tickCount, axisHeight, axisWidth } = this.props;
-
+    console.log('XAxis#render', this.props);
+    const { width, height, data, dataKey, tickCount, xAxisHeight } = this.props;
     const { formatter } = this.props;
-    const chartWidth = width - axisWidth;
+    const scale = this.props.scale.copy().domain(data[dataKey]);
+    const chartWidth = scale.range()[1] - scale.range()[0];
+
     // tickValues generator should be fixed.
     // - other points should has equal pads
     // - needs prefix/suffix pad
-    const scale = scaleBand()
-                    .domain(data[dataKey])
-                    .range([0, chartWidth])
-                    .paddingInner(0.2)
-                    .paddingOuter(0.5);
     const tickValues = ticks(0, data[dataKey].length-1, tickCount)
                           .map((i) => data[dataKey][i])
     const fontSize = 12;
     const textOffsetY = height - fontSize/2;
-    const xAxisOffsetY = height - axisHeight;
+    const xAxisOffsetY = height - xAxisHeight;
 
     return (
       <g>

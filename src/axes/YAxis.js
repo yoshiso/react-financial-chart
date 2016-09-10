@@ -35,7 +35,9 @@ export class YAxis extends Component {
     ]),
     width: PropTypes.number,
     height: PropTypes.number,
-    formatter: PropTypes.func
+    formatter: PropTypes.func,
+    scale: PropTypes.func,
+    yAxisWidth: PropTypes.number
   };
 
   static defaultProps = {
@@ -46,18 +48,17 @@ export class YAxis extends Component {
   }
 
   render() {
-    const { width, height, data, dataKey, tickCount, axisWidth, axisHeight } = this.props;
+    const { width, height, data, dataKey, tickCount, yAxisWidth, } = this.props;
     const { formatter } = this.props;
     const { fontSize, axisTextLeft } = this.props;
-    const chartHeight = height - axisHeight;
 
-    const scale = scaleLinear()
-                    .range([chartHeight, 0])
-                    .domain(minMax(data, normalizeDataKey(dataKey)))
+    const scale = this.props.scale.copy()
+                      .domain(minMax(data, normalizeDataKey(dataKey)))
     const tickValues = scale.ticks(tickCount);
 
-    const textOffsetX  = width - axisWidth;
-    const yAxisOffsetX = width - axisWidth;
+    const chartHeight = scale.range()[1] - scale.range()[0];
+    const textOffsetX  = width - yAxisWidth;
+    const yAxisOffsetX = width - yAxisWidth;
 
     return (
       <g>

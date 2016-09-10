@@ -57,19 +57,14 @@ export class CandleLegend extends Component {
   }
 
   scales() {
-    const { chartRect: { width, height }, data, keyH, keyL, keyDate } = this.props;
+    const { chartRect: { width, height }, data, keyH, keyL, keyDate, scales } = this.props;
 
-    const x = scaleBand()
-                .domain(data[keyDate])
-                .range([0, width])
-                .paddingInner(0.2)
-                .paddingOuter(0.5)
-    const y = scaleLinear()
-                .range([height, 0])
-                .domain([
-                    min(data[keyL]),
-                    max(data[keyH])
-                ])
+    const x = scales.x.copy().domain(data[keyDate])
+    const y = scales.y.copy()
+                    .domain([
+                        min(data[keyL]),
+                        max(data[keyH])
+                    ])
     return { x, y }
   }
 

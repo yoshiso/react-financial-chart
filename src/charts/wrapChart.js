@@ -41,8 +41,8 @@ export default (ChartComponent) => {
 
     static defaultProps = {
       margin: { top: 10, left: 10, right: 10, bottom: 10 },
-      axisHeight: 20,
-      axisWidth: 60
+      xAxisHeight: 20,
+      yAxisWidth: 60
     }
 
     state = {
@@ -67,7 +67,7 @@ export default (ChartComponent) => {
       this.setState({ hovering: { isHover: true, ...offset }});
     }
 
-    chartRect() {
+    containerRect() {
       const { layout, margin } = this.props;
       return {
         width: layout.width - margin.left - margin.right,
@@ -75,29 +75,46 @@ export default (ChartComponent) => {
       }
     }
 
+    chartRect() {
+      const { width, height } = this.containerRect();
+      const { xAxisHeight, yAxisWidth } = this.props;
+      const yAxis = findByComponent(this.props.children, 'YAxis');
+      const xAxis = findByComponent(this.props.children, 'XAxis');
+      return {
+        width: yAxis ? width - yAxisWidth : width,
+        height: xAxis ? height - xAxisHeight : height
+      }
+    }
+
+    scales() {
+      const { width, height } = this.chartRect();
+      const x = ChartComponent.xScaler.copy().range([0, width])
+      const y = ChartComponent.yScaler.copy().range([height, 0])
+      return { x, y }
+    }
+
     render() {
-        const { layout, margin, children, axisHeight, axisWidth, ...others } = this.props;
+        const { layout, margin, children, xAxisHeight, yAxisWidth, ...others } = this.props;
         const { colorScheme } = others;
-        const containerRect = this.chartRect()
+        const containerRect = this.containerRect();
+        const scales = this.scales();
 
         const xAxis = findAndProvisionXAxis(children, {
-          ...containerRect, data: others.data, axisWidth, axisHeight
+          ...containerRect, data: others.data, xAxisHeight, scale: scales.x
         });
 
         const yAxis = findAndProvisionYAxis(children, {
-          ...containerRect, data: others.data, axisWidth, axisHeight
+          ...containerRect, data: others.data, yAxisWidth, scale: scales.y
         })
 
-        const chartRect = {
-          width: xAxis ? containerRect.width - yAxis.props.axisWidth :  containerRect.width,
-          height: yAxis ? containerRect.height - xAxis.props.axisHeight :  containerRect.height
-        }
+        const chartRect = this.chartRect();
+
         const { hovering } = this.state;
         const legend = findAndProvisionLegend(children, {
-          data: others.data, chartRect, hovering
+          data: others.data, chartRect, hovering, scales
         })
 
-        console.debug('chartRect', chartRect)
+        console.debug('chartRect', chartRect);
 
         return (
           <g width={chartRect.width}
@@ -115,8 +132,8 @@ export default (ChartComponent) => {
             { xAxis }
             { yAxis }
             <ChartComponent
-              rect={ chartRect }
               hovering={ this.state.hovering }
+              scales={ scales }
               { ...others }
               ></ChartComponent>
             { legend }

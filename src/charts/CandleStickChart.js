@@ -11,17 +11,17 @@ export class CandleStickChart extends Component {
   static displayName = 'CandleStickChart';
 
   static propTypes = {
-    rect: React.PropTypes.shape({
-      width: React.PropTypes.number,
-      height: React.PropTypes.number
-    }),
     keyO: React.PropTypes.string,
     keyH: React.PropTypes.string,
     keyL: React.PropTypes.string,
     keyC: React.PropTypes.string,
     keyDate: React.PropTypes.string,
     colorScheme: ColorSchemePropType.isRequired,
-    data: OHLCPropType.isRequired
+    data: OHLCPropType.isRequired,
+    scales: React.PropTypes.shape({
+      x: React.PropTypes.func,
+      y: React.PropTypes.func
+    })
   }
 
   static defaultProps = {
@@ -32,26 +32,24 @@ export class CandleStickChart extends Component {
     keyDate: 'date'
   }
 
+  static xScaler = scaleBand()
+                    .paddingInner(0.2)
+                    .paddingOuter(0.5);
+  static yScaler = scaleLinear();
+
   scales() {
-    const { rect: { width, height }, data, keyH, keyL, keyDate } = this.props;
-    const x = scaleBand()
-                .domain(data[keyDate])
-                .range([0, width])
-                .paddingInner(0.2)
-                .paddingOuter(0.5)
-    const y = scaleLinear()
-                .range([height, 0])
-                .domain([
-                    min(data[keyL]),
-                    max(data[keyH])
-                ])
-    return { x, y }
+    const { scales: { x, y }, data, keyH, keyL, keyDate } = this.props;
+    return {
+      x:  x.domain(data[keyDate]),
+      y: y.domain([min(data[keyL]), max(data[keyH])])
+    }
   }
 
   render() {
-    const { rect: { height, width }, colorScheme } = this.props;
+    const { colorScheme } = this.props;
     const { data, keyO, keyH, keyC, keyL, keyDate } = this.props;
-    const { x, y } = this.scales()
+    const { x, y } = this.scales();
+
     const { children } = this.props;
     return (
       <g>
