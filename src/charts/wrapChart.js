@@ -40,7 +40,7 @@ export default (ChartComponent) => {
     }
 
     static defaultProps = {
-      margin: { top: 10, left: 10, right: 10, bottom: 10 },
+      margin: { top: 10, left: 40, right: 10, bottom: 10 },
       xAxisHeight: 20,
       yAxisWidth: 60
     }

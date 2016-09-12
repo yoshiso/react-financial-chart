@@ -34,7 +34,7 @@ export class CandleStickChart extends Component {
 
   static xScaler = scaleBand()
                     .paddingInner(0.2)
-                    .paddingOuter(0.5);
+                    .paddingOuter(0.2);
   static yScaler = scaleLinear();
 
   scales() {
@@ -46,6 +46,7 @@ export class CandleStickChart extends Component {
   }
 
   render() {
+    console.debug('CandleStickChart#render', this.props);
     const { colorScheme } = this.props;
     const { data, keyO, keyH, keyC, keyL, keyDate } = this.props;
     const { x, y } = this.scales();

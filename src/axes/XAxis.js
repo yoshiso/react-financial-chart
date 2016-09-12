@@ -40,16 +40,17 @@ export class XAxis extends Component {
       <g>
         {
           tickValues.map((t) => {
+            const x = scale(t) + scale.bandwidth() / 2;
             return (
               <g key={`xtick-${t}`}>
-                <text x={scale(t)}
+                <text x={x}
                       y={textOffsetY}
                       textAnchor="middle"
                       fontSize={fontSize}>
                       { `${ formatter(new Date(t)) }` }
                 </text>
-                <line x1={scale(t)}
-                      x2={scale(t)}
+                <line x1={x}
+                      x2={x}
                       y1={xAxisOffsetY}
                       y2={0}
                       style={ {stroke: '#c2c2c2', opacity: 0.3} }></line>

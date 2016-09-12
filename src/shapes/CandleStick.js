@@ -16,9 +16,9 @@ export class CandleStick extends Component {
     render() {
         const { barWidth, date, yO, yH, yL, yC, x, colorScheme } = this.props;
 
-        const bar = `M${x - barWidth / 2},${yO}h${barWidth}V${yC}h${-barWidth}V${yO}z`;
-        const highWick = `M${x},${Math.min(yC,yO)}V${yH}`;
-        const lowWick = `M${x},${Math.max(yC,yO)}V${yL}`;
+        const bar = `M${x},${yO}h${barWidth}V${yC}h${-barWidth}V${yO}z`;
+        const highWick = `M${x + barWidth / 2},${Math.min(yC,yO)}V${yH}`;
+        const lowWick = `M${x + barWidth / 2},${Math.max(yC,yO)}V${yL}`;
 
         const fillColor = yO < yC ? colorScheme.fillUp : colorScheme.fillDown;
 
