@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { min, max, scaleLinear, scaleBand } from 'd3';
+import { min, max, scaleLinear, scaleBand, line } from 'd3';
 
 import { ColorSchemePropType, OHLCPropType } from '../proptypes';
 import { CandleStick } from '../shapes/CandleStick';
 import wrapChart from './wrapChart';
+
 
 @wrapChart
 export class CandleStickChart extends Component {
@@ -32,24 +33,21 @@ export class CandleStickChart extends Component {
     keyDate: 'date'
   }
 
-  static xScaler = scaleBand()
-                    .paddingInner(0.2)
-                    .paddingOuter(0.2);
-  static yScaler = scaleLinear();
-
-  scales() {
-    const { scales: { x, y }, data, keyH, keyL, keyDate } = this.props;
+  static scales = (props) => {
+    const { data, keyH, keyL, keyDate } = Object.assign({}, CandleStickChart.defaultProps, props);
     return {
-      x:  x.domain(data.map((v) => v[keyDate])),
-      y: y.domain([min(data.map((v) => v[keyL])), max(data.map((v) => v[keyH]))])
+      x: scaleBand()
+        .paddingInner(0.2)
+        .paddingOuter(0.2).domain(data.map((v) => v[keyDate])),
+      y: scaleLinear()
+        .domain([min(data.map((v) => v[keyL])), max(data.map((v) => v[keyH]))])
     }
   }
 
   render() {
     console.debug('CandleStickChart#render', this.props);
     const { colorScheme } = this.props;
-    const { data, keyO, keyH, keyC, keyL, keyDate } = this.props;
-    const { x, y } = this.scales();
+    const { data, keyO, keyH, keyC, keyL, keyDate, scales: { x, y } } = this.props;
 
     const { children } = this.props;
     return (

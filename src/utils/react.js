@@ -1,4 +1,5 @@
 import { Children } from 'react';
+import { isArray } from './types';
 
 export const getDisplayName = (Component) => {
     if (!Component) { throw new Error('Component is not defined');  }
@@ -14,7 +15,9 @@ export const findAllByComponent = (children, displayName) => {
   Children.forEach(children, child => {
     if (!child || !child.type) { return; }
     const childDisplayName = child.type.displayName || child.type.name;
-    if (childDisplayName === displayName) {
+    const names = isArray(displayName) ? displayName : [displayName];
+
+    if (names.indexOf(childDisplayName) !== -1) {
       found.push(child);
     }
   })

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import OHLC from './USDJPY'
-import { CandleStickChart, XAxis, YAxis, CandleLegend } from '../src'
+import { CandleStickChart, LineChart, XAxis, YAxis, CandleLegend } from '../src'
 import { defaultColorScheme } from '../src/proptypes';
 
 var newOne = OHLC['date'].slice(0, 60).map((v, i) => {
@@ -90,6 +90,7 @@ export default class App extends Component {
             data={this.state.ohlc}>
             <XAxis dataKey='date' />
             <YAxis dataKey={['open', 'high', 'low', 'close']} />
+            <LineChart keyX='date' keyY='open'></LineChart>
             <CandleLegend />
           </CandleStickChart>
         </svg>

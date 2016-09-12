@@ -1,29 +1,44 @@
 import React, { Component, PropTypes } from 'react';
-import { getDisplayName, findByComponent, getMouseOffset } from '../utils/react';
+import { getDisplayName, findAllByComponent, findByComponent, getMouseOffset } from '../utils/react';
 
 const findAndProvisionXAxis = (children, props) => {
   const xAxis = findByComponent(children, 'XAxis');
   if (!xAxis) { return null };
-  return React.cloneElement(xAxis, { ...props })
+  return React.cloneElement(xAxis, { ...props, ...xAxis.props })
 }
 
 const findAndProvisionYAxis = (children, props) => {
   const yAxis = findByComponent(children, 'YAxis');
   if (!yAxis) { return null };
-  return React.cloneElement(yAxis, { ...props })
+  return React.cloneElement(yAxis, { ...props, ...yAxis.props })
 }
 
 const findAndProvisionLegend = (children, props) => {
   // todo: standarize Legend
   const legend = findByComponent(children, 'CandleLegend');
-  return React.cloneElement(legend, { ...props })
+  if (!legend) { return null };
+  return React.cloneElement(legend, { ...props, ...legend.props })
+}
+
+const findOverlayChart = (children, props) => {
+
+  const charts = findAllByComponent(children, 'LineChart');
+  if (charts.length === 0) return null;
+  return React.Children.map(charts, (chart) => {
+    return React.cloneElement(chart, {
+      ...props,
+      ...chart.props,
+      margin: { left: 0, right: 0, top: 0, bottom: 0 },
+      overlay: true
+    });
+  })
 }
 
 export default (ChartComponent) => {
   return class ChartWrapper extends Component {
     static displayName = getDisplayName(ChartComponent);
 
-    static propTypes = {
+    static propTypes = Object.assign({}, ChartComponent.propTypes, {
       layout: React.PropTypes.shape({
         width: React.PropTypes.number,
         height: React.PropTypes.number
@@ -37,13 +52,14 @@ export default (ChartComponent) => {
         right: PropTypes.integer,
         bottom: PropTypes.integer
       })
-    }
+    })
 
-    static defaultProps = {
+    static defaultProps = Object.assign({}, ChartComponent.defaultProps, {
       margin: { top: 10, left: 40, right: 10, bottom: 10 },
       xAxisHeight: 20,
-      yAxisWidth: 60
-    }
+      yAxisWidth: 60,
+      overlay: false
+    })
 
     state = {
       hovering: {
@@ -88,16 +104,27 @@ export default (ChartComponent) => {
 
     scales() {
       const { width, height } = this.chartRect();
-      const x = ChartComponent.xScaler.copy().range([0, width])
-      const y = ChartComponent.yScaler.copy().range([height, 0])
+      const mainscales = ChartComponent.scales(this.props);
+      const x = mainscales.x.range([0, width])
+      const y = mainscales.y.range([height, 0])
       return { x, y }
     }
 
     render() {
-        const { layout, margin, children, xAxisHeight, yAxisWidth, ...others } = this.props;
+        const { layout, margin, children, xAxisHeight, yAxisWidth, overlay, ...others } = this.props;
         const { colorScheme } = others;
         const containerRect = this.containerRect();
         const scales = this.scales();
+        const chartRect = this.chartRect();
+        const { hovering } = this.state;
+
+        const mainChart = (
+          <ChartComponent
+            hovering={ hovering }
+            scales={ scales }
+            { ...others }
+            />
+        )
 
         const xAxis = findAndProvisionXAxis(children, {
           ...containerRect, data: others.data, xAxisHeight, scale: scales.x
@@ -105,16 +132,15 @@ export default (ChartComponent) => {
 
         const yAxis = findAndProvisionYAxis(children, {
           ...containerRect, data: others.data, yAxisWidth, scale: scales.y
+        });
+
+        const overlays = findOverlayChart(children, {
+          layout: chartRect, ...others, scales
         })
 
-        const chartRect = this.chartRect();
-
-        const { hovering } = this.state;
         const legend = findAndProvisionLegend(children, {
           data: others.data, chartRect, hovering, scales
         })
-
-        console.debug('chartRect', chartRect);
 
         return (
           <g width={chartRect.width}
@@ -128,14 +154,12 @@ export default (ChartComponent) => {
                   width={chartRect.width}
                   height={chartRect.height}
                   fill={colorScheme.chartBg}
-                  stroke={colorScheme.chartFrame}></rect>
+                  stroke={colorScheme.chartFrame}
+                  opacity={(overlay ? 0 : 1)}></rect>
             { xAxis }
             { yAxis }
-            <ChartComponent
-              hovering={ this.state.hovering }
-              scales={ scales }
-              { ...others }
-              ></ChartComponent>
+            { mainChart }
+            { overlays }
             { legend }
           </g>
         );
