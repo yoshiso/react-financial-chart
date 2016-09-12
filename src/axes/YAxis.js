@@ -6,12 +6,12 @@ import { isString } from '../utils/types';
 const minMax = (data, keys) => {
   const mins = []
   const maxes = []
-    keys.forEach((k) => {
-    if (data[k]) {
-      mins.push(min(data[k]))
-      maxes.push(max(data[k]))
-    }
+  keys.forEach((k) => {
+    const col = data.map((v) => v[k]);
+    mins.push(min(col))
+    maxes.push(max(col))
   })
+
   return [min(mins), max(maxes)]
 }
 
@@ -28,7 +28,7 @@ export class YAxis extends Component {
   static displayName = 'YAxis';
 
   static propTypes = {
-    data: PropTypes.object,
+    data: PropTypes.array,
     dataKey: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.arrayOf(PropTypes.string)

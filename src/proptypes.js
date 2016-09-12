@@ -21,10 +21,12 @@ export const defaultColorScheme = {
   }
 }
 
-export const OHLCPropType = PropTypes.shape({
-  open: PropTypes.arrayOf(PropTypes.number),
-  high: PropTypes.arrayOf(PropTypes.number),
-  low: PropTypes.arrayOf(PropTypes.number),
-  close: PropTypes.arrayOf(PropTypes.number),
-  date: PropTypes.arrayOf(PropTypes.number)
-})
+export const OHLCPropType = PropTypes.arrayOf(
+  PropTypes.shape({
+    open: PropTypes.number,
+    high: PropTypes.number,
+    low: PropTypes.number,
+    close: PropTypes.number,
+    date: PropTypes.number,
+  })
+)

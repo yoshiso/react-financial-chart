@@ -3,13 +3,8 @@ import { min, max, scaleLinear, scaleBand, timeFormat } from 'd3';
 
 import { defaultColorScheme, OHLCPropType } from '../proptypes';
 
-const percentile = (arr, ratio) => {
-  console.log(arr, ratio, )
-  return arr[Math.floor(arr.length * ratio)]
-}
-
 const searchDateIndex = (dates, ratio) => {
-  return Math.ceil(dates.length * ratio)
+  return Math.floor(dates.length * ratio)
 }
 
 export class CandleLegend extends Component {
@@ -59,11 +54,11 @@ export class CandleLegend extends Component {
   scales() {
     const { chartRect: { width, height }, data, keyH, keyL, keyDate, scales } = this.props;
 
-    const x = scales.x.copy().domain(data[keyDate])
+    const x = scales.x.copy().domain(data.map((v) => v[keyDate]))
     const y = scales.y.copy()
                     .domain([
-                        min(data[keyL]),
-                        max(data[keyH])
+                        min(data.map((v) => v[keyL])),
+                        max(data.map((v) => v[keyH]))
                     ])
     return { x, y }
   }
@@ -79,9 +74,11 @@ export class CandleLegend extends Component {
     const { x: xScale, y: yScale } = this.scales()
     const size = xScale.domain().length * xScale.step();
     const xPos = hovering.x - xScale.step() * xScale.paddingOuter();
-    const i = searchDateIndex(data[keyDate], (xPos - xScale.bandwidth()/2) / size);
 
-    if (!data[keyDate][i]) return null;
+    const i = searchDateIndex(data.map((x) => x[keyDate]),
+                              (xPos) / size);
+
+    if (!data[i]) return null;
 
     const yD = y + 20;
     const yO = yD + 16;
@@ -100,11 +97,11 @@ export class CandleLegend extends Component {
               opacity={0.8}
               >
         </rect>
-        <text y={yD} x={x + 8} fontSize={12} textAnchor="start" fill={colorScheme.text} >{ `Date: ${formatter(new Date(data[keyDate][i]))}`}</text>
-        <text y={yO} x={x + 8} fontSize={12} textAnchor="start" fill={colorScheme.text} >{ `Open: ${data[keyO][i].toFixed(2)}`}</text>
-        <text y={yH} x={x + 8} fontSize={12} textAnchor="start" fill={colorScheme.text} >{ `High: ${data[keyH][i].toFixed(2)}`}</text>
-        <text y={yL} x={x + 8} fontSize={12} textAnchor="start" fill={colorScheme.text} >{ `Low: ${data[keyL][i].toFixed(2)}`}</text>
-        <text y={yC} x={x + 8} fontSize={12} textAnchor="start" fill={colorScheme.text} >{ `Close: ${data[keyC][i].toFixed(2)}`}</text>
+        <text y={yD} x={x + 8} fontSize={12} textAnchor="start" fill={colorScheme.text} >{ `Date: ${formatter(new Date(data[i][keyDate]))}`}</text>
+        <text y={yO} x={x + 8} fontSize={12} textAnchor="start" fill={colorScheme.text} >{ `Open: ${data[i][keyO].toFixed(2)}`}</text>
+        <text y={yH} x={x + 8} fontSize={12} textAnchor="start" fill={colorScheme.text} >{ `High: ${data[i][keyH].toFixed(2)}`}</text>
+        <text y={yL} x={x + 8} fontSize={12} textAnchor="start" fill={colorScheme.text} >{ `Low: ${data[i][keyL].toFixed(2)}`}</text>
+        <text y={yC} x={x + 8} fontSize={12} textAnchor="start" fill={colorScheme.text} >{ `Close: ${data[i][keyC].toFixed(2)}`}</text>
       </g>
     );
   }

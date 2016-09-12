@@ -30,7 +30,7 @@ export default (ChartComponent) => {
       }),
       axisHeight: React.PropTypes.number,
       axisWidth: React.PropTypes.number,
-      data: PropTypes.object,
+      data: PropTypes.array,
       margin: PropTypes.shape({
         top: PropTypes.integer,
         left: PropTypes.integer,

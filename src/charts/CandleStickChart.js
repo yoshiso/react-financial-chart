@@ -40,8 +40,8 @@ export class CandleStickChart extends Component {
   scales() {
     const { scales: { x, y }, data, keyH, keyL, keyDate } = this.props;
     return {
-      x:  x.domain(data[keyDate]),
-      y: y.domain([min(data[keyL]), max(data[keyH])])
+      x:  x.domain(data.map((v) => v[keyDate])),
+      y: y.domain([min(data.map((v) => v[keyL])), max(data.map((v) => v[keyH]))])
     }
   }
 
@@ -55,16 +55,16 @@ export class CandleStickChart extends Component {
     return (
       <g>
         {
-          data[keyDate].map(function(date, i) {
+          data.map(function(item) {
             return (
               <CandleStick
-                yO={y(data[keyO][i])}
-                yH={y(data[keyH][i])}
-                yL={y(data[keyL][i])}
-                yC={y(data[keyC][i])}
-                x={x(date)}
+                yO={y(item[keyO])}
+                yH={y(item[keyH])}
+                yL={y(item[keyL])}
+                yC={y(item[keyC])}
+                x={x(item[keyDate])}
                 barWidth={x.bandwidth()}
-                key={date}
+                key={item[keyDate]}
                 colorScheme={colorScheme} />
             )
           })

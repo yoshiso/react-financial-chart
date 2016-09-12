@@ -4,10 +4,16 @@ import OHLC from './USDJPY'
 import { CandleStickChart, XAxis, YAxis, CandleLegend } from '../src'
 import { defaultColorScheme } from '../src/proptypes';
 
-const newOne = {};
-['open', 'high', 'low', 'close', 'date'].forEach(function(n) {
-  newOne[n] = OHLC[n].slice(0, 60)
+var newOne = OHLC['date'].slice(0, 60).map((v, i) => {
+    return {
+      open: OHLC['open'][i],
+      high: OHLC['high'][i],
+      low: OHLC['low'][i],
+      close: OHLC['close'][i],
+      date: OHLC['date'][i],
+    };
 })
+
 console.log(newOne)
 
 export default class App extends Component {
@@ -33,9 +39,14 @@ export default class App extends Component {
   }
 
   onClickLeft(e) {
-    const next = {};
-    ['open', 'high', 'low', 'close', 'date'].forEach(function(n) {
-      next[n] = OHLC[n].slice(self.state.n - 1, self.state.n - 1 + 60)
+    const next = OHLC['date'].slice(0, 60).map((v, i) => {
+        return {
+          open: OHLC['open'][i],
+          high: OHLC['high'][i],
+          low: OHLC['low'][i],
+          close: OHLC['close'][i],
+          date: OHLC['date'][i],
+        }
     })
     this.setState({
       ohlc: next,
@@ -45,9 +56,14 @@ export default class App extends Component {
 
   onClickRight(e) {
     self = this;
-    const next = {};
-    ['open', 'high', 'low', 'close', 'date'].forEach(function(n) {
-      next[n] = OHLC[n].slice(self.state.n + 1, self.state.n + 1 + 60)
+    const next = OHLC['date'].slice(this.state.n + 1, this.state.n + 60 + 1).map((v, i) => {
+        return {
+          open: OHLC['open'][i],
+          high: OHLC['high'][i],
+          low: OHLC['low'][i],
+          close: OHLC['close'][i],
+          date: OHLC['date'][i],
+        }
     })
     this.setState({
       ohlc: next,
